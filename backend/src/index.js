@@ -4,33 +4,15 @@ const auth = {
   password: process.env.API_KEY // API token
 };
 const apiurl = `https://${process.env.SPACE}/api/video`;
-const moderatorPermissions = [
-  "room.list_available_layouts",
-  "room.recording",
-  "room.set_layout",
-  "room.member.audio_mute",
-  "room.member.audio_unmute",
-  "room.member.deaf",
-  "room.member.undeaf",
-  "room.member.remove",
-  "room.member.set_input_sensitivity",
-  "room.member.set_input_volume",
-  "room.member.set_output_volume",
-  "room.member.video_mute",
-  "room.member.video_unmute"
-];
+
 const normalPermissions = [
   "room.self.audio_mute",
   "room.self.audio_unmute",
-  "room.self.video_mute",
-  "room.self.video_unmute",
   "room.self.deaf",
   "room.self.undeaf",
   "room.self.set_input_volume",
   "room.self.set_output_volume",
   "room.self.set_input_sensitivity",
-  "room.hide_video_muted",
-  "room.show_video_muted"
 ];
 
 // Basic express boilerplate
@@ -45,44 +27,33 @@ app.use(cors());
 // End basic express boilerplate
 
 app.get("/", (req, res) => {
-  if (
-    auth.username === undefined ||
-    auth.password === undefined ||
-    auth.username === "" ||
-    auth.password === ""
-  )
+  if (!auth.username || !auth.password || !process.env.SPACE)
     return res.send(
-      "Hello. My environment variables are not set.<br/> Please set them from your signalwire space."
+      "Hello. The environment variables are not set.<br/> Please set PROJECT_ID, API_KEY, and SPACE."
     );
-  else return res.send("Hello. I'm alive");
+  else return res.send("The server is running.");
 });
 
-// Endpoint to request token for video call
+// Endpoint to request token for a room
 app.post("/get_token", async (req, res) => {
-  let { user_name, room_name, mod } = req.body;
+  const { user_name, room_name } = req.body;
   console.log("Name: ", user_name, "Room: ", room_name);
-  if (mod) console.log("As Moderator");
+
   try {
-    let token = await axios.post(
-      apiurl + "/room_tokens",
-      {
+    const response = await axios.post(
+      apiurl + "/room_tokens", {
         user_name,
         room_name: room_name,
-        permissions: mod
-          ? [...normalPermissions, ...moderatorPermissions]
-          : normalPermissions
-      },
-      { auth }
+        permissions: normalPermissions
+      }, {
+        auth
+      }
     );
 
-    token = token.data?.token;
+    const token = response.data?.token;
     console.log(
       "Token:",
       token.length < 7 ? token : token.substring(0, 6) + "..."
-    );
-    console.log(
-      "Permissions: ",
-      mod ? [...normalPermissions, ...moderatorPermissions] : normalPermissions
     );
 
     return res.json({ token });
@@ -92,29 +63,15 @@ app.post("/get_token", async (req, res) => {
   }
 });
 
-// Endpoint to obtain the file of a given recording
-app.get("/get_recording/:id", async (req, res) => {
-  try {
-    const rec = await axios.get(`${apiurl}/room_recordings/${req.params.id}`, {
-      auth
-    });
-    res.json(rec.data);
-  } catch (e) {
-    console.log(e);
-    return res.sendStatus(500);
-  }
-});
-
-app.get("/rooms", async (req, res) => {
-  const rooms = await axios.get(`${apiurl}/rooms`, { auth });
-  res.json(rooms.data.data);
-});
-
 app.get("/roomsAndParticipants", async (req, res) => {
+  // Get all most recent room sessions
   let rooms = await axios.get(`${apiurl}/room_sessions`, { auth });
   rooms = rooms.data.data; // In real applications, check the "next" field.
 
+  // Filter to get only the in-progress room sessions
   rooms = rooms.filter((r) => r.status === "in-progress");
+
+  // Augment each room session object with the list of participants in it
   rooms = await Promise.all(
     rooms.map(async (r) => ({
       ...r,
