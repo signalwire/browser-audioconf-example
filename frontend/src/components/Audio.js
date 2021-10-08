@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import * as SignalWire from "@signalwire/js"
 import * as Server from './Server'
 
