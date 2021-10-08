@@ -1,9 +1,3 @@
-import { useEffect } from "react";
-import * as SignalWire from "@signalwire/js"
-import * as Server from './Server'
-
-const audioRootElement = document.createElement('div')
-
 /**
  * This function connects the client to the specified room.
  *
@@ -30,71 +24,31 @@ export default async function Audio({
   onMutedUnmuted = () => { },
 }) {
 
-  let members = []
+  // TODO: Get a Virtual Room Token from our own server, specifying the name of
+  //       the room and the name of the urse
 
-  // Get a token from our own server
-  const token = await Server.getToken(user, room)
+  // TODO: Create a RoomSession object for the room we're interested in
 
-  const roomSession = new SignalWire.Video.RoomSession({
-    token: token,
-    audio: true,
-    video: false,
-    rootElement: audioRootElement
-  })
+  // TODO: Connect events for retrieving the updated list of participants, and
+  //       call `onParticipantsUpdated` to update the UI
 
-  console.log("Joining...")
+  // remove:
+  setTimeout(() => onParticipantsUpdated([{name: "someone", audio_muted: false}]))
 
-  // To experiment from the browser's development console
-  window.room = roomSession
+  // TODO: Connect events for detecting when a participant is talking, and call
+  //       `onParticipantTalking` to update the UI
 
-  roomSession.on('member.joined', (e) => {
-    console.log('Event: member.joined')
-    members = [...members, e.member]
-    onParticipantsUpdated(members)
-  })
+  // TODO: Connect events for detecting when we get muted or unmuted, and call
+  //       `onMutedUnmuted` to update the UI
 
-  roomSession.on('member.updated', (e) => {
-    console.log('Event: member.updated')
-    const memberIndex = members.findIndex(
-      x => x.id === e.member.id
-    )
-    if (memberIndex < 0) return
-    members[memberIndex] = {
-      ...members[memberIndex],
-      ...e.member
-    }
-    onParticipantsUpdated([...members])
+  // TODO: Join the room session
 
-    // Have we been muted/unmuted? If so, trigger an event.
-    if (e.member.id === roomSession.memberId) {
-      if (e.member.updated.includes('audio_muted')) {
-        onMutedUnmuted(e.member.audio_muted)
-      }
-    }
-  })
+  // TODO: Get the current list of participants, and call
+  //       `onParticipantsUpdated` to update the UI
 
-  roomSession.on('member.left', (e) => {
-    console.log('Event: member.left')
-    members = members.filter(
-      (m) => m.id !== e.member.id
-    );
-    onParticipantsUpdated([...members]);
-  })
+  // TODO: Return the room session object so that it can be used from the
+  //       outside
 
-  roomSession.on('member.talking', (e) => {
-    console.log('Event: member.talking')
-    onParticipantTalking(e.member.id, e.member.talking)
-  })
-
-  await roomSession.join()
-  console.log("Joined!")
-
-  // Update the list of participants
-  setTimeout(async () => {
-    const currMembers = await roomSession.getMembers()
-    members = [...currMembers.members];
-    onParticipantsUpdated(members);
-  }, 0)
-
-  return roomSession
+  // remove:
+  return {}
 }

@@ -72,10 +72,10 @@ export default function RoomPage({ username }) {
 
     if (muted) {
       // We need to unmute
-      roomSession.current.audioUnmute()
+      // TODO Call roomSession method to unmute audio
     } else {
       // We need to mute
-      roomSession.current.audioMute()
+      // TODO Call roomSession method to mute audio
     }
 
     setMuted(!muted)

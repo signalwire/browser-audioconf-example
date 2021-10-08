@@ -12,12 +12,8 @@ const url = 'https://6i94n.sse.codesandbox.io'
  * @returns {string} the Video Room Token
  */
 export async function getToken(user, room) {
-  const response = await axios.post(`${url}/get_token`, {
-    user_name: user,
-    room_name: room,
-    mod: false,
-  });
-  return response.data.token;
+  // TODO
+  return "..."
 }
 
 /**
@@ -37,7 +33,15 @@ export async function getToken(user, room) {
  *     }
  */
 export async function getRooms() {
-  const response = await axios.get(`${url}/roomsAndParticipants?timestamp=${new Date().getTime()}`);
-  const rooms = response.data;
-  return rooms
+  // TODO
+
+  // remove this:
+  return [{
+    name: "room_1",
+    display_name: "room_1",
+    members: [
+      { "name": "daniel" },
+      { "name": "john" },
+    ]
+  }]
 }
