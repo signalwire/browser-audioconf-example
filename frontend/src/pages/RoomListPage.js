@@ -28,11 +28,15 @@ export default function RoomListPage({ username }) {
     const tmr = setInterval(async () => {
       if (lock) return
       lock = true
-      const rooms = await Server.getRooms()
-      setRooms(rooms)
+      try {
+        const rooms = await Server.getRooms()
+        setRooms(rooms)
+      } catch (e) {
+        console.error(e)
+      }
       lock = false
       setIsLoading(false)
-    }, 1000)
+    }, 2000)
 
     return () => clearInterval(tmr)
   }, [])
