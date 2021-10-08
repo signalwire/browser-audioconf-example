@@ -47,6 +47,13 @@ export default async function Audio({
   // To experiment from the browser's development console
   window.room = roomSession
 
+  roomSession.on('room.joined', async (e) => {
+    console.log('Event: room.joined')
+    const currMembers = await roomSession.getMembers()
+    members = [...currMembers.members];
+    onParticipantsUpdated(members);
+  })
+
   roomSession.on('member.joined', (e) => {
     console.log('Event: member.joined')
     members = [...members, e.member]
@@ -88,13 +95,6 @@ export default async function Audio({
 
   await roomSession.join()
   console.log("Joined!")
-
-  // Update the list of participants
-  setTimeout(async () => {
-    const currMembers = await roomSession.getMembers()
-    members = [...currMembers.members];
-    onParticipantsUpdated(members);
-  }, 0)
 
   return roomSession
 }
