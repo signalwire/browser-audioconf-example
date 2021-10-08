@@ -1,0 +1,25 @@
+{
+  "name": "clubhouse-clone",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "prepare": "(cd backend && echo 'Installing backend deps...' && npm install) && (cd frontend && echo 'Installing client-app deps...' && npm install)",
+    "start": "concurrently --kill-others \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:backend": "cd backend && npm run start",
+    "start:frontend": "cd frontend && npm run start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/signalwire/browser-audioconf-example.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/signalwire/browser-audioconf-example/issues"
+  },
+  "homepage": "https://github.com/signalwire/browser-audioconf-example#readme",
+  "devDependencies": {
+    "concurrently": "^6.3.0"
+  }
+}
