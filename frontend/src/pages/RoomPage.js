@@ -26,6 +26,7 @@ export default function RoomPage({ username }) {
   // The room session object with methods to control the room
   const roomSession = useRef(null)
 
+  // Connect the audio session
   useEffect(() => {
     const ret = Audio({
       room: roomName,
@@ -47,17 +48,27 @@ export default function RoomPage({ username }) {
       }
     })
 
+    // As soon as it's ready, store the RoomSession object
+    // inside `roomSession.current`.
     ret.then(v => roomSession.current = v)
 
     // Cleanup
     return () => ret.then(v => {
-      v.leave();
+      v?.leave?.();
       roomSession.current = null;
     })
   }, [roomName, username])
 
+  /**
+   * This function is called whenever the user clicks on the microphone button
+   * to mute or unmute themselves. In the `muted` variable you find the current
+   * muted state, which needs to be inverted.
+   */
   function toggleMute() {
     if (!roomSession.current) return
+
+    // The RoomSession object returned by the Audio function is
+    // stored in `roomSession.current`.
 
     if (muted) {
       // We need to unmute
@@ -71,7 +82,7 @@ export default function RoomPage({ username }) {
   }
 
   function leave() {
-    if (roomSession.current) {
+    if (roomSession.current && roomSession.current.leave) {
       roomSession.current.leave()
     }
     history.push('/rooms')

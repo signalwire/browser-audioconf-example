@@ -4,6 +4,24 @@ import * as Server from './Server'
 
 const audioRootElement = document.createElement('div')
 
+/**
+ * This function connects the client to the specified room.
+ *
+ * @param {string} room The name of the room
+ * @param {string} room The name of the user
+ * @param {function} onParticipantsUpdated Function that is called whenever the
+ *                   list of participants changes. Receives the list of
+ *                   participants.
+ * @param {function} onParticipantTalking Function that is called whenever a
+ *                   member starts or stops talking. Receives as first parameter
+ *                   the id of the member, and as second parameter a boolean
+ *                   indicating whether they are talking.
+ * @param {function} onMutedUnmuted Function that is called whenever the current
+ *                   member is muted or unmuted. Receives a boolean indicating
+ *                   the current state.
+ *
+ * @returns a RoomSession object
+ */
 export default async function Audio({
   room,
   user,

@@ -15,7 +15,6 @@ import RoomListPage from "./pages/RoomListPage.js";
 import RoomPage from "./pages/RoomPage.js";
 
 function App() {
-  //let query = useQuery();
   let history = useHistory();
   const [username, setUsername] = useState("");
 
