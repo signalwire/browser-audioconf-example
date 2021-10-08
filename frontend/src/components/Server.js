@@ -15,7 +15,6 @@ export async function getToken(user, room) {
   const response = await axios.post(`${url}/get_token`, {
     user_name: user,
     room_name: room,
-    mod: false,
   });
   return response.data.token;
 }
