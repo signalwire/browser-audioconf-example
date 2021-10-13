@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-=======
-import * as SignalWire from "@signalwire/js"
-import * as Server from './Server'
-
-const audioRootElement = document.createElement('div')
-
->>>>>>> master
 /**
  * This function connects the client to the specified room.
  *
