@@ -6,6 +6,7 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Loader from "react-loader-spinner";
+import socketIOClient from "socket.io-client";
 
 import RoomPreview from '../components/RoomPreview.js'
 import * as Server from '../components/Server'
@@ -24,21 +25,11 @@ export default function RoomListPage({ username }) {
   const handleStartNew = () => history.push('/room/' + newRoomName.replace(/[^a-zA-Z0-9]/g, '_'));
 
   useEffect(() => {
-    let lock = false  // to avoid making overlapping requests
-    const tmr = setInterval(async () => {
-      if (lock) return
-      lock = true
-      try {
-        const rooms = await Server.getRooms()
-        setRooms(rooms)
-      } catch (e) {
-        console.error(e)
-      }
-      lock = false
+    const socket = socketIOClient(Server.url);
+    socket.on("rooms_updated", rooms => {
+      setRooms(rooms)
       setIsLoading(false)
-    }, 2000)
-
-    return () => clearInterval(tmr)
+    });
   }, [])
 
   return (
