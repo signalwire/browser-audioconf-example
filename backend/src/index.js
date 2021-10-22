@@ -16,15 +16,23 @@ const normalPermissions = [
 ];
 
 // Basic express boilerplate
+const http = require('http');
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const axios = require("axios");
 
 const app = express();
+const server = http.createServer(app);
 app.use(bodyParser.json());
 app.use(cors());
 // End basic express boilerplate
+
+const { createClient } = require('@signalwire/realtime-api')
+
+const io = require("socket.io")(server, {
+  cors: { origin: '*' }
+});
 
 app.get("/", (req, res) => {
   if (!auth.username || !auth.password || !process.env.SPACE)
@@ -64,6 +72,10 @@ app.post("/get_token", async (req, res) => {
 });
 
 app.get("/roomsAndParticipants", async (req, res) => {
+  res.json(await getRoomsAndParticipants())
+})
+
+async function getRoomsAndParticipants() {
   // Get all most recent room sessions
   let rooms = await axios.get(`${apiurl}/room_sessions`, { auth });
   rooms = rooms.data.data; // In real applications, check the "next" field.
@@ -81,13 +93,31 @@ app.get("/roomsAndParticipants", async (req, res) => {
     }))
   );
 
-  res.json(rooms);
-});
+  return rooms
+}
 
 async function start(port) {
-  app.listen(port, () => {
+  server.listen(port, () => {
     console.log("Server listening at port", port);
   });
+
+  const realtimeClient = await createClient({
+    project: auth.username,
+    token: auth.password
+  })
+
+  const emitRoomsUpdated = async () => io.emit('rooms_updated', await getRoomsAndParticipants())
+
+  io.on('connection', (socket) => emitRoomsUpdated())
+
+  realtimeClient.video.on('room.started', async (room) => {
+    emitRoomsUpdated()
+    room.on('member.joined', () => emitRoomsUpdated())
+    room.on('member.left', () => emitRoomsUpdated())
+  })
+  realtimeClient.video.on('room.ended', () => emitRoomsUpdated())
+
+  await realtimeClient.connect()
 }
 
 // Start the server
