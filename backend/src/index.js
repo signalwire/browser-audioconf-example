@@ -71,10 +71,6 @@ app.post("/get_token", async (req, res) => {
   }
 });
 
-app.get("/roomsAndParticipants", async (req, res) => {
-  res.json(await getRoomsAndParticipants())
-})
-
 async function getRoomsAndParticipants() {
   // Get all most recent room sessions
   let rooms = await axios.get(`${apiurl}/room_sessions`, { auth });
