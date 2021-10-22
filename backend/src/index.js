@@ -97,15 +97,20 @@ async function start(port) {
     console.log("Server listening at port", port);
   });
 
+  // We create a SignalWire Realtime SDK client.
   const realtimeClient = await createClient({
     project: auth.username,
     token: auth.password
   })
 
+  // Function that sends a `rooms_updated` events over Socket.IO.
   const emitRoomsUpdated = async () => io.emit('rooms_updated', await getRoomsAndParticipants())
 
+  // When a new Socket.IO client connects, send them the list of rooms
   io.on('connection', (socket) => emitRoomsUpdated())
 
+  // When something changes in the list of rooms or members, trigger a new
+  // event.
   realtimeClient.video.on('room.started', async (room) => {
     emitRoomsUpdated()
     room.on('member.joined', () => emitRoomsUpdated())
