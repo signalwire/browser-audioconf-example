@@ -25,6 +25,21 @@ export default function RoomListPage({ username }) {
   const handleStartNew = () => history.push('/room/' + newRoomName.replace(/[^a-zA-Z0-9]/g, '_'));
 
   useEffect(() => {
+    /**
+     * We use socket.io to listen to the rooms_updated events that we emit
+     * server-side. The value that we get is an array, with each entry being an
+     * object such as
+     *
+     *     {
+     *       "id": "1b3f7a21-3191-1175-ae15-30c558a5afbc",
+     *       "name": "Roomname1",
+     *       "display_name": "Roomname1",
+     *       "members": [
+     *         { "name": "daniel" },
+     *         { "name": "john" },
+     *       ]
+     *     }
+     */
     const socket = socketIOClient(Server.url);
     socket.on("rooms_updated", rooms => {
       setRooms(rooms)
