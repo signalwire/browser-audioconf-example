@@ -25,7 +25,7 @@ export default async function Audio({
 }) {
 
   // TODO: Get a Virtual Room Token from our own server, specifying the name of
-  //       the room and the name of the urse
+  //       the room and the name of the user
 
   // TODO: Create a RoomSession object for the room we're interested in
 
@@ -42,9 +42,6 @@ export default async function Audio({
   //       `onMutedUnmuted` to update the UI
 
   // TODO: Join the room session
-
-  // TODO: Get the current list of participants, and call
-  //       `onParticipantsUpdated` to update the UI
 
   // TODO: Return the room session object so that it can be used from the
   //       outside
