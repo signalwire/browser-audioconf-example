@@ -54,7 +54,9 @@ export default function RoomPage({ username }) {
 
     // Cleanup
     return () => ret.then(v => {
-      v?.leave?.();
+      try {
+        v.leave();
+      } catch (_) { }
       roomSession.current = null;
     })
   }, [roomName, username])
@@ -83,7 +85,9 @@ export default function RoomPage({ username }) {
 
   function leave() {
     if (roomSession.current && roomSession.current.leave) {
-      roomSession.current.leave()
+      try {
+        roomSession.current.leave()
+      } catch (_) { }
     }
     history.push('/rooms')
   }
