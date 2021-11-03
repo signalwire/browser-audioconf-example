@@ -58,6 +58,8 @@ export default async function Audio({
   setTimeout(() => onParticipantsUpdated([{name: "someone", audio_muted: false}]))
 
   /*
+  let members = []
+  
   roomSession.on('room.joined', async (e) => {
     const currMembers = await roomSession.getMembers()
     members = [...currMembers.members];
