@@ -12,6 +12,16 @@ export const url = 'http://127.0.0.1:8080'
  * @returns {string} the Video Room Token
  */
 export async function getToken(user, room) {
-  // TODO
+  // ****** TODO ******
+  // Get the Room Token from `${url}/get_token`
+  
   return "..."
+
+  /*
+  const response = await axios.post(`${url}/get_token`, {
+    user_name: user,
+    room_name: room,
+  });
+  return response.data.token;
+  */
 }
