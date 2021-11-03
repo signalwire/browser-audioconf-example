@@ -1,8 +1,6 @@
 import * as SignalWire from "@signalwire/js"
 import * as Server from './Server'
 
-const audioRootElement = document.createElement('div')
-
 /**
  * This function connects the client to the specified room.
  *
@@ -37,8 +35,7 @@ export default async function Audio({
   const roomSession = new SignalWire.Video.RoomSession({
     token: token,
     audio: true,
-    video: false,
-    rootElement: audioRootElement
+    video: false
   })
 
   console.log("Joining...")
